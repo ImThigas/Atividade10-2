@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de CEP</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Atividade 10 - 2</h1>
+
+    <form id="cepForm">
+      <div class="form-group">
+        <label for="cepInput">CEP:</label>
+        <input type="text" class="form-control" id="cepInput" placeholder="Digite o CEP" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Consultar</button>
+    </form>
+
+    <div id="result" class="d-none"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#cepForm').submit(function(event) {
+        event.preventDefault();
+        var cep = $('#cepInput').val();
+        searchCEP(cep);
+      });
+    });
+
+    function searchCEP(cep) {
+      $.ajax({
+        url: 'https://viacep.com.br/ws/' + cep + '/json/',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+          if (response.erro) {
+            $('#result').html('<p class="text-danger">CEP não encontrado.</p>');
+          } else {
+            var address = '<p><strong>CEP:</strong> ' + response.cep + '</p>';
+            address += '<p><strong>Logradouro:</strong> ' + response.logradouro + '</p>';
+            address += '<p><strong>Bairro:</strong> ' + response.bairro + '</p>';
+            address += '<p><strong>Cidade:</strong> ' + response.localidade + '/' + response.uf + '</p>';
+            $('#result').html(address);
+          }
+          $('#result').removeClass('d-none');
+        },
+        error: function() {
+          $('#result').html('<p class="text-danger">Ocorreu um erro na consulta. Tente novamente mais tarde.</p>');
+          $('#result').removeClass('d-none');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
